@@ -174,13 +174,14 @@ public class Utils {
     }
 
     public static String getServerURL(Context context) {
+        String serverUrl = SystemProperties.get("lunaris.updater.uri");
+        if (serverUrl.isEmpty()) {
+            boolean hasGMS = SystemProperties.getBoolean("with_google_apps", false);
+            int urlResId = hasGMS ? R.string.updater_server_url : R.string.updater_server_url_vanilla;
+            serverUrl = context.getString(urlResId);
+        }
         String device = SystemProperties.get(Constants.PROP_NEXT_DEVICE,
                 SystemProperties.get(Constants.PROP_DEVICE));
-
-        boolean hasGMS = SystemProperties.getBoolean("with_google_apps", false);
-
-        int urlResId = hasGMS ? R.string.updater_server_url : R.string.updater_server_url_vanilla;
-        String serverUrl = context.getString(urlResId);
 
         return serverUrl.replace("{device}", device);
     }
